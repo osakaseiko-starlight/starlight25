@@ -1,0 +1,103 @@
+---
+import { Image } from 'astro:assets';
+import tenmonStamp from '../../images/tenmonStamp.png';
+import Menu from './Menu.vue';
+import { getCollection } from 'astro:content';
+
+const allEntries = await getCollection('book');
+
+const kindArrays = allEntries.map(entry => entry.data.kind);
+const allKinds = kindArrays.flat();
+const uniqueKinds = [...new Set(allKinds)];
+
+const bookVerArrays = allEntries.map(entry => entry.data.bookVer);
+const allVers = bookVerArrays.flat();
+const uniqueVers = [...new Set(allVers)];
+---
+
+<header>
+  <a data-pagefind-ignore href="/">
+    <Image class="headerImg" src={tenmonStamp} alt="天文部スタンプ" width={40} />
+    <p>The Scientific Seiko</p>
+  </a>
+  <div>
+    <ul>
+      <li><a href='/'>部誌一覧</a></li>
+      <li><a href="/search/">検索</a></li>
+      <li><a href="/form/">アンケート</a></li>
+    </ul>
+    <Menu
+      kinds={uniqueKinds}
+      vers={uniqueVers}
+      client:load
+    />
+  </div>
+</header>
+
+<style lang='scss'>
+  header {
+    margin: 10px 0;
+    padding: 0 30px;
+    box-sizing: border-box;
+    display: flex;
+    background-color: rgba(0, 16, 72, 0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    width: 100vw;
+    top: 0;
+    left: 0;
+
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      ul {
+        display: flex;
+        li {
+          list-style-type: none;
+          margin: auto 6px;
+          &:nth-child(1) {
+            @media (max-width: 630px) {
+              font-size: 0;
+            }
+          }
+          &:nth-child(2) {
+            @media (max-width: 260px) {
+              font-size: 0;
+            }
+          }
+          &:nth-child(3) {
+            @media (max-width: 350px) {
+              font-size: 0;
+            }
+          }
+        }
+      }
+    }
+
+    a {
+      display: flex;
+      flex-direction: row;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+        .headerImg {
+          opacity: 0.7;
+        }
+      }
+      p {
+        margin: 0;
+        font-family: 'EpItalic';
+        font-weight: 2px;
+        font-size: 2em;
+        @media (max-width: 559px) {
+          font-size: 0;
+        }
+      }
+    }
+  }
+</style>

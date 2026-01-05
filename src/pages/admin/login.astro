@@ -1,0 +1,13 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+import LoginForm from '../../components/admin/LoginForm.svelte';
+
+---
+
+<Layout
+  title="ログイン - Admin | The Scientific Seiko 2025"
+  noindex={true}
+>
+  <LoginForm client:load />
+</Layout>

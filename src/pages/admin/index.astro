@@ -1,0 +1,17 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+import AccountWidget from '../../components/admin/AccountWidget.svelte';
+---
+
+<Layout
+  title="Admin | The Scientific Seiko 2025"
+  noindex={true}
+>
+  <h2>管理ページ</h2>
+  <AccountWidget client:load />
+  <section>
+    <h3><a href="/admin/form/">アンケートを集計</a></h3>
+    <h3><a href="/admin/ticket/">チケットを管理</a></h3>
+  </section>
+</Layout>

@@ -1,0 +1,72 @@
+---
+import Header from '../components/layoutFunc/Header.astro';
+import Footer from '../components/layoutFunc/Footer.astro';
+import { ClientRouter } from 'astro:transitions';
+import 'katex/dist/katex.min.css';
+import '../styles/globals.scss';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  icon?: string;
+}
+
+const {
+  noindex = false,
+  title = 'The Scientific Seiko 2025 | 大阪星光学院天文部',
+  description = 'こちらは，大阪星光学院天文部の部誌「The Scientific Seiko」2025年 デジタル版です．',
+  icon = '/hotlink-ok/stamp.png'
+} = Astro.props;
+
+const 正規URL = new URL(Astro.url.pathname, Astro.site).href;
+
+const pagefindAttr = noindex
+  ? {} // noindexが true の場合（インデックスしない）：空のオブジェクト
+  : { "data-pagefind-body": true };
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- 基本情報とAstro -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title data-pagefind-meta="title">{title}</title>
+    <meta name="description" content={description} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={正規URL} />
+
+    <!-- アイコン -->
+    <link rel="apple-touch-icon" href="/hotlink-ok/stamp.png" />
+    <link rel="icon" href='/hotlink-ok/stamp.png' />
+
+    <!-- Pagefind メタデータ -->
+    <meta data-pagefind-default-meta="image[content]" content={icon} />
+    <ClientRouter />
+  </head>
+  <body {...pagefindAttr}>
+    <Header />
+    <section class="slot">
+      <slot transition:animate=slide />
+    </section>
+    <Footer />
+  </body>
+</html>
+
+<style lang="scss">
+  body {
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+  .slot {
+    min-height: 200px;
+    margin: 70px 20px 20px;
+    padding: auto;
+    box-sizing: border-box;
+  }
+</style>

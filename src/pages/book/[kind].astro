@@ -1,0 +1,55 @@
+---
+import { getCollection } from "astro:content";
+import Layout from '../../layouts/Layout.astro';
+import BackToList from '../../components/layoutFunc/BackToList.astro';
+
+export async function getStaticPaths() {
+  const allEntries = await getCollection('book');
+
+  const uniqueKind = [...new Set(allEntries.map((entry) => entry.data.kind))];
+
+  return uniqueKind.map((kind) => {
+    const entries = allEntries.filter((entry) => entry.data.kind === kind);
+
+    return {
+      params: {kind: kind},
+      props: {kind: kind, entries: entries}
+    };
+  });
+};
+
+const { kind } = Astro.props;
+
+const filteredEntries = await getCollection('book', ({ data }) => {
+  return data.kind === kind;
+});
+filteredEntries.sort((a, b) => a.data.pageId - b.data.pageId);
+
+const title = `${kind}の記事 | The Scientific Seiko 2025`;
+---
+
+<Layout
+  title={title}
+>
+  <BackToList />
+  <h1>{kind}の記事</h1>
+  <ul data-pagefind-ignore class="bookListSlot">
+    {filteredEntries.map(bookEntry => (
+      <li>
+        <p>
+          <div class="noUnderline">
+            <p><a href=`/book/${bookEntry.data.bookVer}/` >{bookEntry.data.bookVer}</a> p.{bookEntry.data.pageNo}，{bookEntry.data.kind}</p>
+          </div>
+          <div>
+            <a href=`/book/${bookEntry.slug}/` >
+              <h2>{bookEntry.data.title}</h2>
+            </a>
+          </div>
+          <div>
+            <p>{bookEntry.data.authorInitial}</p>
+          </div>
+        </p>
+      </li>
+    ))}
+  </ul>
+</Layout>

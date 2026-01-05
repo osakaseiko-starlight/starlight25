@@ -1,0 +1,65 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import BackToList from "../../components/layoutFunc/BackToList.astro";
+
+export async function getStaticPaths() {
+  const bookEntries = await getCollection('book');
+  return bookEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props;
+const { Content } = await render( entry );
+
+// generateDescription
+import { generateDescription } from '../../utils/generate-description.mts';
+const currentPost = entry;
+const postDescription = generateDescription(currentPost, 160);
+---
+
+<Layout
+  title=`${entry.data.title} | The Scientific Seiko 2025`
+  description={postDescription}
+>
+  <BackToList />
+  <h1>{entry.data.title}</h1>
+  <div class="subText">
+    <p>
+      <span data-pagefind-meta="掲載巻">
+        <a href=`/book/${entry.data.bookVer}/` data-pagefind-filter="掲載巻">{entry.data.bookVer}</a>
+        p.{entry.data.pageNo}
+      </span>
+      ，
+      <a href=`/book/${entry.data.kind}/` data-pagefind-filter="種類" data-pagefind-meta="種類">{entry.data.kind}</a>
+      <br />
+      著者：<span data-pagefind-meta="著者">{entry.data.authorInitial}</span>
+    </p>
+  </div>
+  <section class="mdxSection">
+    <Content />
+  </section>
+</Layout>
+
+<style lang="scss">
+  .subText {
+    p {
+      color: var(--foreground-sub);
+    
+      a {
+        text-decoration: none;
+        color: var(--a-default);
+        &:hover {
+          color: var(--a-hover);
+          text-decoration: underline;
+        }
+      }
+    }
+    text-align: center;
+  }
+  img {
+    max-width: 100%;
+  }
+</style>
